@@ -1,0 +1,19 @@
+REGISTRO USUARIO
+Controlador de registro recibe el dto con los datos del usuario
+
+CREACION DEL PERFIL
+El usuario autenticado envia un dto con su tipo de rol
+(ProveedorDto)
+UserService crea el nuevo perfil con los datos aportados 
+por el dto.
+
+GUARDAR ITEM 
+NOTIFICAR
+
+Mecanismo de descuento:
+(se supone que el vendedor comprara por lotes)
+
+recibir dto Descuento(id item, atributos que detallen cantidad a descontar);
+buscar el item en la db segun el dto.
+segun el dto modificar los valores referidos a la cantidad.
+condicional: si ahora la cantidad es menor a x numero notificar al proveedor
