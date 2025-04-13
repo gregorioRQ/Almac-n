@@ -37,4 +37,13 @@ public class ProveedorService {
         proveedorDao.save(nuevoProveedor);
         return nuevoProveedor;
     }
+
+    public void eliminarProveedor(String nombreComercial) {
+        Proveedor proveedorEliminar = proveedorDao.findByNombreComercial(nombreComercial);
+
+        if (proveedorEliminar == null) {
+            throw new EntityNotFoundException("El proveedor: " + nombreComercial + " no se encuentra registrado");
+        }
+        proveedorDao.delete(proveedorEliminar);
+    }
 }
