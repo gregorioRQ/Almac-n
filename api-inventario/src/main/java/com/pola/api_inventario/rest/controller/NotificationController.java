@@ -1,12 +1,18 @@
 package com.pola.api_inventario.rest.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import com.pola.api_inventario.rest.models.Notification;
 import com.pola.api_inventario.rest.models.Item;
+import com.pola.api_inventario.rest.models.ItemDto;
+import com.pola.api_inventario.rest.models.Mensaje;
 import com.pola.api_inventario.rest.models.User;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +21,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificationController {
     private final SimpMessagingTemplate messagingTemplate;
+
+    @MessageMapping("/logistica")
+    @SendTo("/topic/logistica")
+    public Mensaje handleItemMessage(Mensaje mensaje) {
+        return mensaje;
+
+    }
 
     // Notificar a todos los compradores sobre una nueva parte
     public void notificarNuevoItem(Item producto) {
@@ -25,7 +38,7 @@ public class NotificationController {
 
                 .build();
 
-        messagingTemplate.convertAndSend("/topic/compradores", notification);
+        messagingTemplate.convertAndSend("/topic/logistica", notification);
     }
 
     public void notificarCantidadBajaDeItem(Item item) {

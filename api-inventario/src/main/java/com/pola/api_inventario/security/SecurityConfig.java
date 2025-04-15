@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authRequest -> authRequest
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/mensajes").permitAll() // Permite acceso sin autenticación a /mensajes
                         .requestMatchers("/api/v1/items/**").hasRole("PROVEEDOR")
                         .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
