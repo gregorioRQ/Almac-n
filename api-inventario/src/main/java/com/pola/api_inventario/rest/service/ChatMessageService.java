@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import com.pola.api_inventario.rest.models.ItemDto;
 import com.pola.api_inventario.rest.models.Mensaje;
 import com.pola.api_inventario.rest.repositorio.IMensajeDao;
 
@@ -23,14 +24,13 @@ public class ChatMessageService {
     public void recibirMensajeDeRabbit(String contenido) {
         Mensaje mensaje = new Mensaje();
         mensaje.setContenido(contenido);
-        mensaje.setRemitente("Servidor RabbitMQ"); // Puedes personalizar esto
+        mensaje.setRemitente("Servidor RabbitMQ");
         mensaje.setTimestamp(LocalDateTime.now());
         guardarYEnviarMensaje(mensaje);
     }
 
     public void guardarYEnviarMensaje(Mensaje mensaje) {
         mensajeRepository.save(mensaje);
-        // Por ahora, solo guardamos. La parte de WebSocket vendrá después.
         messagingTemplate.convertAndSend("/topic/mensajes", mensaje);
     }
 

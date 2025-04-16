@@ -12,16 +12,15 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 
+import com.pola.api_inventario.rest.models.ItemDto;
 import com.pola.api_inventario.rest.models.Mensaje;
 import com.pola.api_inventario.rest.service.ChatMessageService;
 
 @Controller
-@CrossOrigin(origins = "http://localhost:3000")
 public class WebSocketController {
     @Autowired
     private ChatMessageService chatMessageService;
@@ -34,8 +33,7 @@ public class WebSocketController {
         // Cuando un cliente envía un mensaje a /app/chat.enviar
         // Creamos el mensaje y lo enviamos al servicio para guardar y propagar
 
-        // Necesitamos obtener el remitente (podría venir del contexto de la sesión)
-        String remitente = "Usuario"; // Reemplazar con la lógica real para obtener el remitente
+        String remitente = "Usuario";
 
         Mensaje mensaje = new Mensaje();
         mensaje.setContenido(contenido);
