@@ -2,6 +2,7 @@ package com.pola.api_inventario.rest.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,10 @@ public class ChatMessageService {
     public void guardarYEnviarMensaje(Mensaje mensaje) {
         mensajeRepository.save(mensaje);
         messagingTemplate.convertAndSend("/topic/mensajes", mensaje);
+    }
+
+    public Optional<Mensaje> obtenerMensajePorId(Long id) {
+        return mensajeRepository.findById(id);
     }
 
     public List<Mensaje> obtenerMensajesAnteriores() {

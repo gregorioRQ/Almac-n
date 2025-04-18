@@ -24,6 +24,10 @@ public class Mensaje {
     @Column(columnDefinition = "LONGTEXT")
     public String contenido;
     public String remitente;
+
+    private String estadoActual;
+
+    @Column(nullable = false)
     public LocalDateTime timestamp;
 
 }
