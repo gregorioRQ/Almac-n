@@ -35,4 +35,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(respuestaError);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<RespuestaError> handle(IllegalArgumentException ex) {
+        RespuestaError respuestaError = new RespuestaError("Campo incorrecto", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuestaError);
+    }
+
 }

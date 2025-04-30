@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import com.pola.api_inventario.rest.models.ItemDto;
 import com.pola.api_inventario.rest.models.Mensaje;
 import com.pola.api_inventario.rest.repositorio.IMensajeDao;
 
@@ -33,6 +32,10 @@ public class ChatMessageService {
     public void guardarYEnviarMensaje(Mensaje mensaje) {
         mensajeRepository.save(mensaje);
         messagingTemplate.convertAndSend("/topic/mensajes", mensaje);
+    }
+
+    public void eliminarMensajePorId(Long id) {
+        mensajeRepository.deleteById(id);
     }
 
     public Optional<Mensaje> obtenerMensajePorId(Long id) {

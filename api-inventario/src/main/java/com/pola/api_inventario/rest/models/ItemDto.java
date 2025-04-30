@@ -65,10 +65,6 @@ public class ItemDto {
     private double altura;
     private boolean esFragil;
 
-    @NotEmpty(message = "El estado no puede estar vacío")
-    @Size(max = 30, message = "El estado no puede tener más de 30 caracteres")
-    private String estado;
-
     @NotEmpty(message = "La ubicación no puede estar vacía")
     @Size(max = 30, message = "La ubicación no puede tener más de 30 caracteres")
     private String ubicacion;

@@ -1,5 +1,6 @@
 package com.pola.api_inventario.rest.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class ItemService {
     private IproveedorDao proveedorDao;
 
     public void aplicarDescuento(DescuentoDto descuentoDto) {
-        // Buscar el item por ID
+
         Optional<Item> optionalItem = itemDao.findById(descuentoDto.getIdItem());
 
         if (optionalItem.isEmpty()) {
@@ -52,7 +53,7 @@ public class ItemService {
         if (item.getCantidadLotes() <= item.getCantidadMinimaLotes()) {
             notificationController.notificarCantidadBajaDeItem(item);
         }
-        // Guardar los cambios en la base de datos
+
         itemDao.save(item);
     }
 
@@ -73,8 +74,6 @@ public class ItemService {
                 .unidadesPorLote(itemDto.getUnidadesPorLote())
                 .longitudPorUnidad(itemDto.getLongitudPorUnidad())
                 .contactoProveedor(itemDto.getContactoProveedor())
-                .fechaUltimaEntrada(itemDto.getFechaUltimaEntrada())
-                .fechaUltimaSalida(itemDto.getFechaUltimaSalida())
                 .caducidad(itemDto.getCaducidad())
                 .categoria(itemDto.getCategoria())
                 .nombre(itemDto.getNombre())
@@ -84,23 +83,49 @@ public class ItemService {
                 .ancho(itemDto.getAncho())
                 .altura(itemDto.getAltura())
                 .esFragil(itemDto.isEsFragil())
-                .estado(itemDto.getEstado())
                 .ubicacion(itemDto.getUbicacion())
                 .proveedor(proveedor)
                 .cantidadMinimaLotes(itemDto.getCantidadMinimaLotes())
                 .build();
 
-        // notificar a los compradores
-        notificationController.notificarNuevoItem(itemGuardar);
+        // notificar a al proveedor del item.
+        notificationController.notificarItemGuardado(itemGuardar);
         return itemDao.save(itemGuardar);
     }
 
     public void eliminarItem(Long id) {
-
         itemDao.deleteById(id);
     }
 
     public Optional<Item> obtenerItemPorId(Long id) {
         return itemDao.findById(id);
+    }
+
+    public List<ItemDto> obtenerTodosLosItems() {
+        List<Item> items = itemDao.findAll();
+        return items.stream().map(this::itemAItemDto).toList();
+    }
+
+    private ItemDto itemAItemDto(Item item) {
+        return ItemDto.builder()
+                .nombre(item.getNombre())
+                .tempMax(item.getTempMax())
+                .tempMin(item.getTempMin())
+                .pesoLote(item.getPesoLote())
+                .esFragil(item.isEsFragil())
+                .largo(item.getLargo())
+                .altura(item.getAltura())
+                .ancho(item.getAncho())
+                .cantidadLotes(item.getCantidadLotes())
+                .cantidadMinimaLotes(item.getCantidadMinimaLotes())
+                .unidadesPorLote(item.getUnidadesPorLote())
+                .volumenPorUnidad(item.getVolumenPorUnidad())
+                .longitudPorUnidad(item.getLongitudPorUnidad())
+                .caducidad(item.getCaducidad())
+                .categoria(item.getCategoria())
+                .pesoPorUnidad(item.getPesoPorUnidad())
+                .nombreComercial(item.getProveedor().getNombreComercial())
+                .contactoProveedor(item.getContactoProveedor())
+                .build();
     }
 }

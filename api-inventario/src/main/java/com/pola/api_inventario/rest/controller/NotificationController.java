@@ -1,9 +1,6 @@
 package com.pola.api_inventario.rest.controller;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -11,10 +8,7 @@ import org.springframework.stereotype.Controller;
 
 import com.pola.api_inventario.rest.models.Notification;
 import com.pola.api_inventario.rest.models.Item;
-import com.pola.api_inventario.rest.models.ItemDto;
 import com.pola.api_inventario.rest.models.Mensaje;
-import com.pola.api_inventario.rest.models.User;
-
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -29,16 +23,25 @@ public class NotificationController {
 
     }
 
-    // Notificar a todos los compradores sobre una nueva parte
-    public void notificarNuevoItem(Item producto) {
+    public void notificarProveedorNoRegistrado(String advertencia) {
         Notification notification = Notification.builder()
-                .type("NUEVO ITEM")
-                .message("Nuevo item disponible")
+                .type("ADVERTENCIA")
+                .message(advertencia)
+                .timestamp(new Date())
+                .build();
+        messagingTemplate.convertAndSend("/topic/proveedor", notification);
+    }
+
+    // Notificar a todos los compradores sobre una nueva parte
+    public void notificarItemGuardado(Item producto) {
+        Notification notification = Notification.builder()
+                .type("INFORME")
+                .message("item guardado con éxito.")
                 .timestamp(new Date())
 
                 .build();
 
-        messagingTemplate.convertAndSend("/topic/logistica", notification);
+        messagingTemplate.convertAndSend("/topic/proveedor", notification);
     }
 
     public void notificarCantidadBajaDeItem(Item item) {

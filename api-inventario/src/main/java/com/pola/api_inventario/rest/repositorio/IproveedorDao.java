@@ -6,4 +6,8 @@ import com.pola.api_inventario.rest.models.Proveedor;
 
 public interface IproveedorDao extends JpaRepository<Proveedor, Long> {
     Proveedor findByNombreComercial(String nombreComercial);
+
+    Proveedor findByEmail(String email);
+
+    Proveedor findByTelefono(String telefono);
 }

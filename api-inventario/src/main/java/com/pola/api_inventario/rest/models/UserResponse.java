@@ -16,4 +16,5 @@ public class UserResponse {
     private String email;
     private String telefono;
     private String role;
+    private String proveedor;
 }

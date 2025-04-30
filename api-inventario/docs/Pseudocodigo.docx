@@ -1,0 +1,51 @@
+PSEUDOCÓDIGO PARA LA APP "BODEGA".
+
+Stack tecnologico pensado:
+Jdk(21), Spring-boot, Maven, Mysql, RabbitMQ, Docker, Websocket, Jwt.
+
+Sistemas principales:
+- Crud basico para las entidades.
+- Autenticacion y Autorizacion de usuarios.
+- Comunicación mediante websokcet y RabbitMQ.
+
+Flujo esperado:
+
+- REGISTRO USUARIO Y LOGIN
+Controlador de registro recibe el dto con los datos del usuario
+Genera un token valido con los datos.
+
+- CREACION DE ENIDAD PROVEEDOR
+El usuario autenticado envia los datos a su respectivo endpoint.
+La entidad se gestiona por medio de su propio crud.
+
+- CREACION DE LA ENTIDAD ITEM
+El usuario que pertenece al departamento de logistica con un rol como "repositor" es el encargado de registrar el nuevo item en la base de datos.
+La entidad se administra por medio de su propio crud.
+
+Mecanismo de descuento:
+(se supone que el vendedor comprara por lotes)
+
+recibir dto Descuento(id item, atributos que detallen cantidad a descontar);
+buscar el item en la db segun el dto.
+segun el dto modificar los valores referidos a la cantidad.
+condicional: si ahora la cantidad es menor a x numero notificar al proveedor
+
+Flujo de los datos del item en el cliente.
+
+- OBTENCION Y REGISTRO DE LOS DATOS DEL ITEM
+Proveedor entrega los datos del item que desea guardar mediante un formulario html.
+En la base de datos se registra la entidad Mensaje con los datos del formulario.
+
+- DISTRIBUCION DEL MENSAJE A LOS DEMAS CLIENTES
+Websocket notifica  a los usuarios de Logistica para que puedan tener un registro del estado actual del item.
+"en espera", "en camino", etc. 
+
+- GUARDADO Y NOTIFICACION AL PROVEEDOR
+El rol repositor registra el nuevo item.
+Se notifica al proveedor acerca de ello.
+La entidad Mensaje se elimina de la base de datos.
+
+- PROVEEDOR ADVERTENCIA
+cuando la cantidad de lotes llegue a x valor, notificar al proveedor que a partir de ese momento cuenta con x cantidad de dias para volver a reponer su item sino sera eliminado de la base de datos.
+
+Si item es eliminado notificar a proveedor.

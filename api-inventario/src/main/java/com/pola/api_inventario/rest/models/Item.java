@@ -44,13 +44,10 @@ public class Item {
 
     private String contactoProveedor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "proveedor_id")
     @JsonBackReference
     private Proveedor proveedor;
-
-    private Date fechaUltimaEntrada;
-    private Date fechaUltimaSalida;
 
     private String caducidad;
     private String categoria;
@@ -62,8 +59,6 @@ public class Item {
     private double ancho;
     private double altura;
     private boolean esFragil;
-
-    private String estado;
 
     private String ubicacion;
     private Integer cantidadMinimaLotes; // Cantidad mínima de lotes antes de enviar una notificación.

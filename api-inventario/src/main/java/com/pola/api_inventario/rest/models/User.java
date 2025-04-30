@@ -55,16 +55,10 @@ public class User implements UserDetails {
     private String telefono;
 
     // Relación uno-a-uno con Proveedor (opcional)
-    @OneToOne
-    @JoinColumn(name = "proveedor_id", unique = true)
-    @JsonIgnore
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+
     private Proveedor proveedor;
 
-    /*
-     * @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch =
-     * FetchType.LAZY, optional = true)
-     * private Vendedor vendedor;
-     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority((role.name())));

@@ -33,13 +33,14 @@ import lombok.Setter;
 public class Proveedor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "proveedor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private User user;
 
-    @OneToMany(mappedBy = "proveedor", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "proveedor", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Item> items;
 
@@ -54,7 +55,7 @@ public class Proveedor {
 
     private String direccion;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String tipoProveedor; // nacional o internacional.
 
     private Date fechaRegistro;
