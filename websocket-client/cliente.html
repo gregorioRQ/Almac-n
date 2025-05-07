@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Proveedor</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        margin: 20px auto;
+      }
+      label {
+        margin-top: 10px;
+      }
+      input {
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #error-message {
+        color: red;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Login Proveedor</h1>
+    <form id="login-form">
+      <label for="username">Usuario:</label>
+      <input type="text" id="username" name="username" required />
+
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required />
+
+      <button type="submit">Iniciar Sesión</button>
+      <div id="error-message"></div>
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const loginForm = document.getElementById("login-form");
+        const errorMessageDiv = document.getElementById("error-message");
+
+        loginForm.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          let authToken = null;
+          let currentUsername = null;
+          let userRoles = null;
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            const response = await fetch("http://localhost:8080/auth/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+                "X-Requested-With": "XMLHttpRequest",
+              },
+              body: JSON.stringify({ username, password }),
+            });
+
+            if (!response.ok) {
+              const error = await response.json();
+              errorMessageDiv.textContent = `Error en el login: ${
+                error.message || response.statusText
+              }`;
+              return;
+            }
+
+            const data = await response.json();
+            if (!data.token) {
+              console.error("Token no recibido: ", data);
+              throw new Error("Invalid server response -  missing token");
+            }
+            console.log(data.token);
+
+            //Decodificar el token para obtener roles
+            const tokenParts = data.token.split(".");
+            if (tokenParts.length !== 3) {
+              throw new Error("Invalid token format");
+            }
+
+            const payload = JSON.parse(atob(tokenParts[1]));
+            console.log("Token payload:", payload);
+
+            authToken = data.token;
+            currentUsername = username;
+            userRoles = payload.roles || []; // Obtener roles del token
+
+            if (userRoles && userRoles.includes("PROVEEDOR")) {
+              // Redirigir al cliente proveedor, pasando el token como parámetro
+              window.location.href = `cliente-proveedor.html?token=${data.token}`;
+            } else if (userRoles && userRoles.includes("LOGISTICA")) {
+              if (payload.department === "repositor") {
+                window.location.href = `cliente-logistica-repositor.html?token=${data.token}`;
+                console.log(
+                  "usuario de logistica pertenece al dep repositorio"
+                );
+              } else if (payload.department === "transporte") {
+                window.location.href = `cliente-logistica-transporte.html?token=${data.token}`;
+                console.log("va pa ttransporte");
+              } else {
+                errorMessageDiv.textContent =
+                  "El usuario no tiene un rol de LOGISTICA";
+              }
+            } else {
+              errorMessageDiv.textContent = "Usuario no tiene un rol válido.";
+            }
+          } catch (error) {
+            console.error("Error al intentar iniciar sesión:", error);
+            errorMessageDiv.textContent = "Error de conexión con el servidor.";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

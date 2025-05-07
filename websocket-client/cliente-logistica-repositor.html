@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cliente para logística de repositor</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+
+      .card {
+        border: 1px solid #ccc;
+        padding: 15px;
+        margin: 10px;
+        border-radius: 5px;
+        box-shadow: 2px 2px 5px #888888;
+        width: 300px;
+      }
+
+      .card-title {
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .card-item {
+        margin-bottom: 5px;
+      }
+
+      .card-label {
+        font-weight: bold;
+        margin-right: 5px;
+      }
+
+      /* Estilos para las notificaciones */
+      #messages p:not(.card) {
+        margin: 8px 0;
+        padding: 10px;
+        border-radius: 6px;
+        background-color: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        animation: slideIn 0.3s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(-20px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      #messages p:not(.card):nth-child(odd) {
+        background-color: #fff3e0;
+        border-left-color: #ff9800;
+      }
+
+      #messages:empty::before {
+        content: "No hay notificaciones";
+        display: block;
+        text-align: center;
+        color: #666;
+        font-style: italic;
+        padding: 20px;
+      }
+
+      /* Estilo para el botón de cargar historial */
+      #cargarHistorial {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 20px auto;
+        display: block;
+      }
+
+      #cargarHistorial:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Cliente para logística de repositores</h1>
+    <button id="cargarHistorial">Cargar mensajes</button>
+
+    <div id="messages"></div>
+    <script src="cliente-logistica-repositor.js"></script>
+  </body>
+</html>
