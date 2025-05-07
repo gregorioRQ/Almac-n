@@ -170,4 +170,4 @@ Para ejecutar la aplicación en tu entorno local, sigue estos pasos:
 
 A continuación, se muestra el diagrama entidad-relación que representa la estructura de la base de datos de la aplicación:
 
-![Diagrama ER](docs/almacen-DER.png)
+![Diagrama ER](api-inventario/docs/almacen-DER.png)
