@@ -43,7 +43,6 @@ public class SecurityConfig {
                                                 .requestMatchers("/ws/public/**").permitAll()
                                                 .requestMatchers("/ws/**").permitAll()
                                                 .requestMatchers("/mensajes").permitAll()
-                                                // .requestMatchers("/ws/proveedor/**").hasRole("PROVEEDOR")
                                                 .requestMatchers("/api/v1/items/**").hasRole("PROVEEDOR")
                                                 .anyRequest().authenticated())
                                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

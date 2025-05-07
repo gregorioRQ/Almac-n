@@ -24,7 +24,7 @@ public class Mensaje {
     @Column(columnDefinition = "LONGTEXT")
     public String contenido;
     public String remitente;
-
+    public String ubicacion;
     private String estadoActual;
 
     @Column(nullable = false)

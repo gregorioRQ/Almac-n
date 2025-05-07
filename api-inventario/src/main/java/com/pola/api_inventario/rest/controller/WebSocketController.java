@@ -53,11 +53,9 @@ public class WebSocketController {
 
         try {
             JsonNode mensajeNode = mapper.readTree(mensajeJson);
-            // Usar la nueva clase de validación
             JsonValidator validator = new JsonValidator();
             JsonValidator.ValidationResult resultado = validator.validar(mensajeNode);
 
-            // Si hay errores, notificar al cliente
             if (!resultado.isValid()) {
                 // Si hay errores, notificar al cliente
                 Map<String, Object> errorResponse = new HashMap<>();
@@ -66,13 +64,12 @@ public class WebSocketController {
 
                 String jsonResponse = mapper.writeValueAsString(errorResponse);
                 notificationController.notificarProveedorNoRegistrado(jsonResponse);
-
             } else {
-
                 Mensaje mensaje = new Mensaje();
                 mensaje.setContenido(mensajeJson);
                 mensaje.setRemitente((String) resultado.getDatos().get("remitente"));
                 mensaje.setEstadoActual((String) resultado.getDatos().get("estado"));
+                mensaje.setUbicacion((String) resultado.getDatos().get("ubicacion"));
                 mensaje.setTimestamp(LocalDateTime.now());
                 chatMessageService.guardarYEnviarMensaje(mensaje);
             }
@@ -91,6 +88,17 @@ public class WebSocketController {
             JsonNode rootNode = mapper.readTree(jsonMensaje);
             Long id = rootNode.path("id").asLong();
             String estadoNuevo = rootNode.path("estado").asText();
+
+            // verifica que el campo ubicacion no está vacío
+            if (estadoNuevo == null || estadoNuevo.trim().isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("mensaje", "Error en la validación de campos");
+                errorResponse.put("errores", "El campo 'estado actual del ítem' es obligatorio");
+
+                String jsonResponse = mapper.writeValueAsString(errorResponse);
+                notificationController.notificarCampoInvalido(jsonResponse);
+                return;
+            }
 
             // 2. Obtener el mensaje existente de la base de datos
             Optional<Mensaje> mensajeOptional = chatMessageService.obtenerMensajePorId(id);
@@ -122,76 +130,43 @@ public class WebSocketController {
             JsonNode contenidoNode = rootNode.path("contenido");
             String remitente = rootNode.path("remitente").asText();
             Long idMensaje = rootNode.path("id").asLong();
+            String ubicacion = rootNode.path("ubicacion").asText();
 
-            // Verificar si el contenido está vacío
-            if (!contenidoNode.isMissingNode()) {
-                // Mapear los campos del JSON a los campos de la clase Item
-                if (contenidoNode.has("pesoPorUnidad")) {
-                    itemGuardar.setPesoPorUnidad(contenidoNode.get("pesoPorUnidad").asDouble());
-                }
-                if (contenidoNode.has("volumenPorUnidad")) {
-                    itemGuardar.setVolumenPorUnidad(contenidoNode.get("volumenPorUnidad").asDouble());
-                }
-                if (contenidoNode.has("cantidadLotes")) {
-                    itemGuardar.setCantidadLotes(contenidoNode.get("cantidadLotes").asInt());
-                }
-                if (contenidoNode.has("pesoLote")) {
-                    itemGuardar.setPesoLote(contenidoNode.get("pesoLote").asDouble());
-                }
-                if (contenidoNode.has("unidadesPorLote")) {
-                    itemGuardar.setUnidadesPorLote(contenidoNode.get("unidadesPorLote").asInt());
-                }
-                if (contenidoNode.has("longitudPorUnidad")) {
-                    itemGuardar.setLongitudPorUnidad(contenidoNode.get("longitudPorUnidad").asDouble());
-                }
-                if (contenidoNode.has("contactoProveedor")) {
-                    itemGuardar.setContactoProveedor(contenidoNode.get("contactoProveedor").asText());
-                }
-                if (contenidoNode.has("caducidad")) {
-                    itemGuardar.setCaducidad(contenidoNode.get("caducidad").asText());
-                }
-                if (contenidoNode.has("categoria")) {
-                    itemGuardar.setCategoria(contenidoNode.get("categoria").asText());
-                }
-                if (contenidoNode.has("nombre")) {
-                    itemGuardar.setNombre(contenidoNode.get("nombre").asText());
-                }
-                if (contenidoNode.has("tempMin")) {
-                    itemGuardar.setTempMin(contenidoNode.get("tempMin").asDouble());
-                }
-                if (contenidoNode.has("tempMax")) {
-                    itemGuardar.setTempMax(contenidoNode.get("tempMax").asDouble());
-                }
-                if (contenidoNode.has("largo")) {
-                    itemGuardar.setLargo(contenidoNode.get("largo").asDouble());
-                }
-                if (contenidoNode.has("ancho")) {
-                    itemGuardar.setAncho(contenidoNode.get("ancho").asDouble());
-                }
-                if (contenidoNode.has("altura")) {
-                    itemGuardar.setAltura(contenidoNode.get("altura").asDouble());
-                }
-                if (contenidoNode.has("esFragil")) {
-                    itemGuardar.setEsFragil(contenidoNode.get("esFragil").asBoolean());
-                }
+            // verifica que el campo ubicacion no está vacío
+            if (ubicacion == null || ubicacion.trim().isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("mensaje", "Error en la validación de campos");
+                errorResponse.put("errores", "El campo ubicación es obligatorio");
 
-                if (contenidoNode.has("ubicacion")) {
-                    itemGuardar.setUbicacion(contenidoNode.get("ubicacion").asText());
-                }
-                if (contenidoNode.has("cantidadMinimaLotes")) {
-                    itemGuardar.setCantidadMinimaLotes(contenidoNode.get("cantidadMinimaLotes").asInt());
-                }
-
-                itemGuardar.setNombreComercial(remitente);
-
-                // Aquí puedes guardar el itemGuardar en la base de datos
-                itemService.guardarItem(itemGuardar);
-                chatMessageService.eliminarMensajePorId(idMensaje);
-
-            } else {
-                System.out.println("El contenido está vacío, no se puede guardar el item.");
-                // Puedes lanzar una excepción o manejar el caso de error como desees
+                String jsonResponse = mapper.writeValueAsString(errorResponse);
+                notificationController.notificarCampoInvalido(jsonResponse);
+                return;
             }
+
+            itemGuardar.setPesoPorUnidad(contenidoNode.get("pesoPorUnidad").asDouble());
+            itemGuardar.setVolumenPorUnidad(contenidoNode.get("volumenPorUnidad").asDouble());
+            itemGuardar.setCantidadLotes(contenidoNode.get("cantidadLotes").asInt());
+            itemGuardar.setPesoLote(contenidoNode.get("pesoLote").asDouble());
+            itemGuardar.setUnidadesPorLote(contenidoNode.get("unidadesPorLote").asInt());
+            itemGuardar.setLongitudPorUnidad(contenidoNode.get("longitudPorUnidad").asDouble());
+            itemGuardar.setContactoProveedor(contenidoNode.get("contactoProveedor").asText());
+            itemGuardar.setCaducidad(contenidoNode.get("caducidad").asText());
+            itemGuardar.setCategoria(contenidoNode.get("categoria").asText());
+            itemGuardar.setNombre(contenidoNode.get("nombre").asText());
+            itemGuardar.setTempMin(contenidoNode.get("tempMin").asDouble());
+            itemGuardar.setTempMax(contenidoNode.get("tempMax").asDouble());
+            itemGuardar.setLargo(contenidoNode.get("largo").asDouble());
+            itemGuardar.setAncho(contenidoNode.get("ancho").asDouble());
+            itemGuardar.setAltura(contenidoNode.get("altura").asDouble());
+            itemGuardar.setEsFragil(contenidoNode.get("esFragil").asBoolean());
+            itemGuardar.setCantidadMinimaLotes(contenidoNode.get("cantidadMinimaLotes").asInt());
+            itemGuardar.setUbicacion(ubicacion);
+            itemGuardar.setNombreComercial(remitente);
+
+            itemService.guardarItem(itemGuardar);
+
+            chatMessageService.eliminarMensajePorId(idMensaje);
+            notificationController.notificarEliminacionMensaje(idMensaje.toString());
 
         } catch (JsonProcessingException e) {
             System.err.println("Error al procesar el JSON: " + e.getMessage());

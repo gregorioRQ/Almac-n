@@ -11,6 +11,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.pola.api_inventario.rest.models.User;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -38,6 +40,17 @@ public class JwtUtil {
         extraClaims.put("roles", user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority) // Extraer el nombre del rol
                 .toList()); // Convertir a lista
+        // extrae el departamento de logistica al que esta vinculado el usuario.
+        // Verificar si el usuario tiene el rol LOGISTICA antes de añadir el
+        // departamento
+        if (user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("LOGISTICA"))) {
+            if (user instanceof User) {
+                String departamento = ((User) user).getLogistica().getDepartamento();
+                if (departamento != null) { // Asegurarse de que el departamento no sea nulo
+                    extraClaims.put("department", departamento);
+                }
+            }
+        }
 
         return getToken(extraClaims, user);
     }

@@ -10,7 +10,6 @@ import com.pola.api_inventario.rest.models.AuthResponse;
 import com.pola.api_inventario.rest.models.LoginRequest;
 import com.pola.api_inventario.rest.models.RegisterRequest;
 import com.pola.api_inventario.rest.service.AuthService;
-import com.rabbitmq.client.RpcClient.Response;
 
 import lombok.RequiredArgsConstructor;
 

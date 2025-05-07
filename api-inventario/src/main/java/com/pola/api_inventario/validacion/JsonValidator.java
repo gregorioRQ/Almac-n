@@ -44,27 +44,26 @@ public class JsonValidator {
         // Validar campos del nodo raíz
         validarCampoRaiz(node, "remitente", "string", true, errores, datos);
         validarCampoRaiz(node, "estado", "string", true, errores, datos);
-
+        validarCampoRaiz(node, "ubicacion", "string", false, errores, datos);
         // validar campos dentro del objeto anidado.
 
-        validarCampo(node, "pesoPorUnidad", "number", false, errores, datos);
-        validarCampo(node, "volumenPorUnidad", "number", false, errores, datos);
-        validarCampo(node, "cantidadLotes", "integer", false, errores, datos);
-        validarCampo(node, "pesoLote", "number", false, errores, datos);
-        validarCampo(node, "unidadesPorLote", "integer", false, errores, datos);
-        validarCampo(node, "longitudPorUnidad", "number", false, errores, datos);
-        validarCampo(node, "contactoProveedor", "string", false, errores, datos);
-        validarCampo(node, "caducidad", "string", false, errores, datos);
-        validarCampo(node, "categoria", "string", false, errores, datos);
-        validarCampo(node, "nombre", "string", false, errores, datos);
-        validarCampo(node, "tempMin", "number", false, errores, datos);
-        validarCampo(node, "tempMax", "number", false, errores, datos);
-        validarCampo(node, "largo", "number", false, errores, datos);
-        validarCampo(node, "ancho", "number", false, errores, datos);
-        validarCampo(node, "altura", "number", false, errores, datos);
-        validarCampo(node, "esFragil", "boolean", false, errores, datos);
-        validarCampo(node, "ubicacion", "string", false, errores, datos);
-        validarCampo(node, "cantidadMinimaLotes", "integer", false, errores, datos);
+        JsonNode contenidoNode = node.path("contenido");
+        validarCampo(contenidoNode, "pesoPorUnidad", "number", true, errores, datos);
+        validarCampo(contenidoNode, "volumenPorUnidad", "number", false, errores, datos);
+        validarCampo(contenidoNode, "cantidadLotes", "integer", true, errores, datos);
+        validarCampo(contenidoNode, "pesoLote", "number", true, errores, datos);
+        validarCampo(contenidoNode, "unidadesPorLote", "integer", false, errores, datos);
+        validarCampo(contenidoNode, "longitudPorUnidad", "number", false, errores, datos);
+        validarCampo(contenidoNode, "caducidad", "string", false, errores, datos);
+        validarCampo(contenidoNode, "categoria", "string", true, errores, datos);
+        validarCampo(contenidoNode, "nombre", "string", true, errores, datos);
+        validarCampo(contenidoNode, "tempMin", "number", true, errores, datos);
+        validarCampo(contenidoNode, "tempMax", "number", true, errores, datos);
+        validarCampo(contenidoNode, "largo", "number", true, errores, datos);
+        validarCampo(contenidoNode, "ancho", "number", true, errores, datos);
+        validarCampo(contenidoNode, "altura", "number", true, errores, datos);
+        validarCampo(contenidoNode, "esFragil", "boolean", false, errores, datos);
+        validarCampo(contenidoNode, "cantidadMinimaLotes", "integer", true, errores, datos);
 
         return new ValidationResult(errores.isEmpty(), errores, datos);
     }
@@ -99,15 +98,16 @@ public class JsonValidator {
             Map<String, String> errores, Map<String, Object> datos) {
         JsonNode valorNode = node.get(campo);
 
+        // verifica si el campo esta persente
         if (esRequerido && (valorNode == null || valorNode.isNull() || valorNode.asText().trim().isEmpty())) {
             errores.put(campo, "El campo es requerido");
             return;
         }
-
+        // verifica si el campo no es nulo
         if (!esRequerido && (valorNode == null || valorNode.isNull())) {
             return;
         }
-
+        // verifica el tipo de dato esperado.
         switch (tipoDato.toLowerCase()) {
             case "string":
                 if (!valorNode.isTextual()) {

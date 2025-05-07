@@ -15,6 +15,7 @@ import com.pola.api_inventario.rest.models.ItemDto;
 import com.pola.api_inventario.rest.models.Proveedor;
 import com.pola.api_inventario.rest.repositorio.IproveedorDao;
 import com.pola.api_inventario.rest.repositorio.ItemDao;
+import com.pola.api_inventario.rest.repositorio.IuserDao;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -27,7 +28,8 @@ public class ItemService {
 
     @Autowired
     private ItemDao itemDao;
-
+    @Autowired
+    private IuserDao userDao;
     @Autowired
     private IproveedorDao proveedorDao;
 
@@ -60,7 +62,8 @@ public class ItemService {
     @Transactional
     public Item guardarItem(ItemDto itemDto) {
 
-        Proveedor proveedor = proveedorDao.findByNombreComercial(itemDto.getNombreComercial());
+        Proveedor proveedor = userDao.findByUsername(itemDto.getNombreComercial()).getProveedor();
+
         if (proveedor == null) {
             throw new EntityNotFoundException(
                     "El proveedor con nombre '" + itemDto.getNombreComercial() + "' no esta registrado.");
