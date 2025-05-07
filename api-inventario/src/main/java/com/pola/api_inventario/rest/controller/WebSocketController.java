@@ -149,7 +149,6 @@ public class WebSocketController {
             itemGuardar.setPesoLote(contenidoNode.get("pesoLote").asDouble());
             itemGuardar.setUnidadesPorLote(contenidoNode.get("unidadesPorLote").asInt());
             itemGuardar.setLongitudPorUnidad(contenidoNode.get("longitudPorUnidad").asDouble());
-            itemGuardar.setContactoProveedor(contenidoNode.get("contactoProveedor").asText());
             itemGuardar.setCaducidad(contenidoNode.get("caducidad").asText());
             itemGuardar.setCategoria(contenidoNode.get("categoria").asText());
             itemGuardar.setNombre(contenidoNode.get("nombre").asText());
